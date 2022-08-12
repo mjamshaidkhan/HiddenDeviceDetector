@@ -29,7 +29,7 @@ namespace HiddenDeviceDetector
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnRunDetector = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
             this.lstDevices = new System.Windows.Forms.ListView();
             this.PortName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lblDevicesHeaderText = new System.Windows.Forms.Label();
@@ -38,15 +38,15 @@ namespace HiddenDeviceDetector
             this.btnUninstall = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnRunDetector
+            // btnRun
             // 
-            this.btnRunDetector.Location = new System.Drawing.Point(15, 51);
-            this.btnRunDetector.Name = "btnRunDetector";
-            this.btnRunDetector.Size = new System.Drawing.Size(132, 86);
-            this.btnRunDetector.TabIndex = 0;
-            this.btnRunDetector.Text = "Run";
-            this.btnRunDetector.UseVisualStyleBackColor = true;
-            this.btnRunDetector.Click += new System.EventHandler(this.btnRunDetector_Click);
+            this.btnRun.Location = new System.Drawing.Point(15, 51);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(132, 86);
+            this.btnRun.TabIndex = 0;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
             // lstDevices
             // 
@@ -74,11 +74,11 @@ namespace HiddenDeviceDetector
             // 
             // lblTotalDevices
             // 
-            this.lblTotalDevices.Location = new System.Drawing.Point(570, 186);
+            this.lblTotalDevices.Location = new System.Drawing.Point(525, 186);
             this.lblTotalDevices.Name = "lblTotalDevices";
-            this.lblTotalDevices.Size = new System.Drawing.Size(111, 23);
+            this.lblTotalDevices.Size = new System.Drawing.Size(156, 23);
             this.lblTotalDevices.TabIndex = 3;
-            this.lblTotalDevices.Text = "Total Devices Count:";
+            this.lblTotalDevices.Text = "Total Hidden Devices Count:";
             // 
             // lblcount
             // 
@@ -93,7 +93,7 @@ namespace HiddenDeviceDetector
             this.btnUninstall.Name = "btnUninstall";
             this.btnUninstall.Size = new System.Drawing.Size(132, 86);
             this.btnUninstall.TabIndex = 5;
-            this.btnUninstall.Text = "UnInstall Devices";
+            this.btnUninstall.Text = "un-install";
             this.btnUninstall.UseVisualStyleBackColor = true;
             this.btnUninstall.Click += new System.EventHandler(this.btnUninstall_Click);
             // 
@@ -107,7 +107,7 @@ namespace HiddenDeviceDetector
             this.Controls.Add(this.lblTotalDevices);
             this.Controls.Add(this.lblDevicesHeaderText);
             this.Controls.Add(this.lstDevices);
-            this.Controls.Add(this.btnRunDetector);
+            this.Controls.Add(this.btnRun);
             this.MaximizeBox = false;
             this.Name = "frmhiddendevices";
             this.Text = "Hidden Devices Detector";
@@ -117,7 +117,7 @@ namespace HiddenDeviceDetector
 
         #endregion
 
-        private System.Windows.Forms.Button btnRunDetector;
+        private System.Windows.Forms.Button btnRun;
         private System.Windows.Forms.ListView lstDevices;
         private System.Windows.Forms.Label lblDevicesHeaderText;
         private System.Windows.Forms.Label lblTotalDevices;

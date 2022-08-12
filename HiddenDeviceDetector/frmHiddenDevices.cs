@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO.Ports;
-using System.Linq;
-using System.Management;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using NLog;
 
@@ -28,52 +16,64 @@ namespace HiddenDeviceDetector
             InitializeComponent();
             _logger = LogManager.GetLogger("");
         }
-        private void btnRunDetector_Click(object sender, EventArgs e)
-        {
-            lstDevices.Clear();
-            SearchHiddenDevices();
-
-        }
-
-
         public void SearchHiddenDevices()
         {
-            _logger.Info("geting hidden devices..");
-            Collection<Object> hiddenDevices = PowerShellHelper.ExecuteString("Get-PnpDevice -class 'Keyboard'");
-            foreach (PSObject obj in hiddenDevices)
+            try
             {
-                var status = obj.Properties["Status"].Value;
-                var name = Convert.ToString(obj.Properties["Name"].Value);
-                if (status.ToString().ToLower().Contains("unknown"))
+                lstDevices.Clear();
+                _logger.Info("geting hidden devices..");
+                Collection<Object> hiddenDevices = PowerShellHelper.ExecuteString("Get-PnpDevice -class 'Ports'");
+                foreach (PSObject obj in hiddenDevices)
                 {
-                    lstDevices.Items.Add(name);
+                    var status = obj.Properties["Status"].Value;
+                    var name = Convert.ToString(obj.Properties["Name"].Value);
+                    if (status.ToString().ToLower().Contains("unknown"))
+                    {
+                        lstDevices.Items.Add(name);
+                    }
                 }
+                lblcount.Text = "(" + lstDevices.Items.Count + ")";
+                if (lstDevices.Items.Count < 1)
+                {
+                    MessageBox.Show("No hidden device found.", "not found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                    MessageBox.Show("All hidden devices has been loaded", "Hidden Devices Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            lblcount.Text = "(" + lstDevices.Items.Count + ")";
-
-            MessageBox.Show("All hidden devices has been loaded", "Hidden Devices Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                MessageBox.Show("Unable to get the hidden devices", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnUninstall_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure to uninstall all hidden devices ??", "Confirm Delete!!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            
+            if (lstDevices.Items.Count < 1)
             {
+                MessageBox.Show("There is no device found to uninstall.", "not found", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            if (MessageBox.Show("Are you sure to delete all hidden devices ??", "Confirm Delete!!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                btnUninstall.Enabled = false;
                 _logger.Info("Uninstall started...");
-                // foreach (ListViewItem device in lstDevices.Items)
+                foreach (ListViewItem device in lstDevices.Items)
                 {
-                    string selectedDevice = lstDevices.SelectedItems[0].Text;
-                    string d = @"foreach ($dev in (Get-PnpDevice | Where-Object{$_.Name  -eq '" + selectedDevice + "'})) { &'pnputil' /remove-device $dev.InstanceId }";
+                    string d = @"foreach ($dev in (Get-PnpDevice | Where-Object{$_.Name  -eq '" + device.Text + "'})) { &'pnputil' /remove-device $dev.InstanceId }";
                     PowerShellHelper.ExecuteString(d);
                 }
                 _logger.Info("Uninstall success...");
                 MessageBox.Show("All hidden devices has been unistalled", "Hidden Devices Uninstalled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnUninstall.Enabled = true;
+                SearchHiddenDevices();
             }
 
         }
-
-        private void lstDevices_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnRun_Click(object sender, EventArgs e)
         {
-
+            SearchHiddenDevices();
         }
     }
 }
