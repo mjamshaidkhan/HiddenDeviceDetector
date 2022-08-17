@@ -21,14 +21,13 @@ namespace HiddenDeviceDetector
 
     public class PowerShellHelper
     {
-        static NLog.Logger _logger;
         public PowerShellHelper()
         {
 
         }
         public static Collection<Object> ExecuteString(string command)  //, IDictionary parameters
         {
-            _logger = NLog.LogManager.GetLogger("");
+         
             Collection<Object> results = null;
             string error = "";
             var ss = InitialSessionState.CreateDefault();
@@ -41,7 +40,6 @@ namespace HiddenDeviceDetector
 
                 if (ps.HadErrors)
                 {
-                    _logger.Error("Command has invoked error");
                     System.Collections.ArrayList errorList = (System.Collections.ArrayList)ps.Runspace.SessionStateProxy.PSVariable.GetValue("Error");
                     error = string.Join("\n", errorList.ToArray());
                     throw new Exception(error);
@@ -54,17 +52,13 @@ namespace HiddenDeviceDetector
                 results = ps.AddScript(command).Invoke<Object>();
                 if (ps.HadErrors == true)
                 {
-                    _logger.Error("Command has invoked error 2");
+                 
 
                     System.Collections.ArrayList errorList = (System.Collections.ArrayList)ps.Runspace.SessionStateProxy.PSVariable.GetValue("Error");
                     error = string.Join("\n", errorList.ToArray());
                     throw new Exception(error);
                 }
 
-                foreach (var result in results)
-                {
-                    _logger.Trace("Results found." + result.ToString());
-                }
             }
 
             return results;

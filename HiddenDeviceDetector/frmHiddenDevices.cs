@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Windows.Forms;
-using NLog;
 
 namespace HiddenDeviceDetector
 {
@@ -10,18 +9,15 @@ namespace HiddenDeviceDetector
     public partial class frmhiddendevices : Form
     {
 
-        Logger _logger;
         public frmhiddendevices()
         {
             InitializeComponent();
-            _logger = LogManager.GetLogger("");
         }
         public void SearchHiddenDevices()
         {
             try
             {
                 lstDevices.Clear();
-                _logger.Info("geting hidden devices..");
                 Collection<Object> hiddenDevices = PowerShellHelper.ExecuteString("Get-PnpDevice -class 'Ports'");
                 foreach (PSObject obj in hiddenDevices)
                 {
@@ -42,7 +38,6 @@ namespace HiddenDeviceDetector
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
                 MessageBox.Show("Unable to get the hidden devices", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -58,13 +53,11 @@ namespace HiddenDeviceDetector
             if (MessageBox.Show("Are you sure to delete all hidden devices ??", "Confirm Delete!!", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 btnUninstall.Enabled = false;
-                _logger.Info("Uninstall started...");
                 foreach (ListViewItem device in lstDevices.Items)
                 {
                     string d = @"foreach ($dev in (Get-PnpDevice | Where-Object{$_.Name  -eq '" + device.Text + "'})) { &'pnputil' /remove-device $dev.InstanceId }";
                     PowerShellHelper.ExecuteString(d);
                 }
-                _logger.Info("Uninstall success...");
                 MessageBox.Show("All hidden devices has been unistalled", "Hidden Devices Uninstalled", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 btnUninstall.Enabled = true;
                 SearchHiddenDevices();

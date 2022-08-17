@@ -16,7 +16,7 @@ namespace HiddenDeviceDetector
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmhiddendevices());
+            Application.Run(new frmCheckPidDevices());
         }
     }
 }
